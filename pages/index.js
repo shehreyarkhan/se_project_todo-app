@@ -48,7 +48,7 @@ const addTodoPopup = new PopupWithForm("#add-todo-popup", (formData) => {
   };
   const todoElement = generateTodo(newTodoData);
   todosSection.addItem(todoElement);
-  todoCounter.updateTotal(true);
+  todoCounter.updateTotal(true); // Increment total count
   addTodoPopup.close();
 });
 addTodoPopup.setEventListeners();
