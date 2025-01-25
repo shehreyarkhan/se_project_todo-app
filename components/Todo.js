@@ -7,21 +7,33 @@ class Todo {
   }
 
   _setEventListeners() {
+    // Event: Delete Button
     this._deleteButton.addEventListener("click", () => {
-      this._onDelete(); // Notify about deletion
-      this._element.remove(); // Remove element from DOM
+      if (this._data.completed) {
+        this._onToggleComplete(false); // Decrement completed count if checked
+      }
+      this._onDelete(); // Notify deletion
+      this._element.remove(); // Remove from DOM
     });
 
+    // Event: Checkbox Change
     this._checkbox.addEventListener("change", () => {
-      const isCompleted = this._checkbox.checked;
-      this._data.completed = isCompleted; // Update internal state
-      this._onToggleComplete(isCompleted); // Notify about toggle
+      this._toggleCompletedState(); // Toggle state and update counter
     });
+  }
+
+  _toggleCompletedState() {
+    this._data.completed = this._checkbox.checked; // Update internal state
+    this._onToggleComplete(this._data.completed); // Notify counter for increment/decrement
   }
 
   _generateCheckboxEl() {
     this._checkbox = this._element.querySelector(".todo__completed");
-    this._checkbox.checked = this._data.completed;
+    this._checkbox.checked = this._data.completed; // Set initial state
+    this._checkbox.id = `todo-${this._data.id}`;
+
+    this._label = this._element.querySelector(".todo__label");
+    this._label.setAttribute("for", `todo-${this._data.id}`); // Link label to checkbox
   }
 
   _generateDate() {
