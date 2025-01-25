@@ -6,27 +6,12 @@ import PopupWithForm from "../components/PopupWithForm.js";
 import Section from "../components/Section.js";
 import TodoCounter from "../components/TodoCounter.js";
 
-// Selectors
 const addTodoButton = document.querySelector(".button_action_add");
 const todosListSelector = ".todos__list";
 const counterSelector = ".counter__text";
 
-// Instantiate TodoCounter
 const todoCounter = new TodoCounter(initialTodos, counterSelector);
 
-// Instantiate Section for Todos
-const todosSection = new Section(
-  {
-    items: initialTodos,
-    renderer: (item) => {
-      const todoElement = generateTodo(item);
-      todosSection.addItem(todoElement);
-    },
-  },
-  todosListSelector
-);
-
-// Function to Generate a Todo
 const generateTodo = (data) => {
   const todo = new Todo(data, "#todo-template", {
     onToggleComplete: (increment) => todoCounter.updateCompleted(increment),
@@ -37,7 +22,21 @@ const generateTodo = (data) => {
   return todo.getView();
 };
 
-// Instantiate PopupWithForm for Adding Todos
+const renderTodo = (item) => {
+  const todoElement = generateTodo(item);
+  todosSection.addItem(todoElement);
+};
+
+const todosSection = new Section(
+  {
+    items: initialTodos,
+    renderer: (item) => {
+      renderTodo(item);
+    },
+  },
+  todosListSelector
+);
+
 const addTodoPopup = new PopupWithForm("#add-todo-popup", (formData) => {
   const id = uuidv4();
   const newTodoData = {
@@ -46,23 +45,24 @@ const addTodoPopup = new PopupWithForm("#add-todo-popup", (formData) => {
     id,
     completed: false,
   };
-  const todoElement = generateTodo(newTodoData);
-  todosSection.addItem(todoElement);
-  todoCounter.updateTotal(true); // Increment total count
+
+  renderTodo(newTodoData);
+  todoCounter.updateTotal(true);
   addTodoPopup.close();
+
+  addTodoFormValidator.resetValidation();
 });
 addTodoPopup.setEventListeners();
 
-// Instantiate FormValidator for Add Todo Form
-const addTodoFormValidator = new FormValidator(validationConfig, addTodoPopup.getFormElement());
+const addTodoFormValidator = new FormValidator(
+  validationConfig,
+  addTodoPopup.getFormElement()
+);
 addTodoFormValidator.enableValidation();
 
-// Render Initial Todos and Counter
 todosSection.renderItems();
 todoCounter.updateCounter();
 
-// Add Event Listener to Open Popup
 addTodoButton.addEventListener("click", () => {
   addTodoPopup.open();
-  addTodoFormValidator.resetValidation();
 });
