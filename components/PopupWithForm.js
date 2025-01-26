@@ -27,10 +27,10 @@ export default class PopupWithForm extends Popup {
   }
 
   // Reset form and close popup
-  close() {
-    super.close();
-    // this._form.reset();
-  }
+  // close() {
+  //   super.close();
+  //   // this._form.reset();
+  // }
 
   // Get the form element for validation
   getFormElement() {
